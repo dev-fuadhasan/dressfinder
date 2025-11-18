@@ -29,13 +29,12 @@ const BraForm = () => {
 
   const totalSteps = 10
 
-  const countries = ['United States', 'United Kingdom', 'Canada', 'Australia', 'India', 'Germany', 'France', 'Italy', 'Spain', 'Japan', 'China', 'Brazil', 'Mexico', 'Other']
-  const ageRanges = ['18-24', '25-30', '30-40', '40+', 'Custom']
-  const bodyTypes = ['Slim', 'Fit', 'Chubby', 'Curvy', 'Plus size', 'Custom']
+  const ageRanges = ['18-24', '25-30', '30-40', '40+']
+  const bodyTypes = ['Slim', 'Fit', 'Chubby', 'Curvy', 'Plus size']
   const braSizes = Array.from({ length: 17 }, (_, i) => {
     const band = 28 + i
     return [`${band}A`, `${band}B`, `${band}C`, `${band}D`, `${band}DD`]
-  }).flat().concat(['Custom'])
+  }).flat()
   
   const breastTypes = [
     { name: 'Round', image: '/boobstype/Round_Breast-2048x555.jpg' },
@@ -51,11 +50,11 @@ const BraForm = () => {
     { name: 'East-west', image: '/boobstype/East_West_Breast-2048x554.jpg' },
   ]
   
-  const dressTypes = ['T-shirt', 'Shirt', 'Saree', 'Lehenga', 'Party Dress', 'Gym Wear', 'Gown', 'Custom']
-  const occasions = ['Office', 'School', 'College', 'Gym', 'Party', 'Festival', 'Date', 'Custom']
-  const appearancePreferences = ['Hot', 'Sexy', 'Hot & Sexy', 'Natural', 'Comfortable', 'Custom']
-  const sexualExperienceOptions = ['Yes', 'No', 'Custom']
-  const colors = ['Black', 'Nude', 'Pink', 'Red', 'White', 'Purple', 'Blue', 'Custom']
+  const dressTypes = ['T-shirt', 'Shirt', 'Saree', 'Lehenga', 'Party Dress', 'Gym Wear', 'Gown']
+  const occasions = ['Office', 'School', 'College', 'Gym', 'Party', 'Festival', 'Date']
+  const appearancePreferences = ['Hot', 'Sexy', 'Hot & Sexy', 'Natural', 'Comfortable']
+  const sexualExperienceOptions = ['Yes', 'No']
+  const colors = ['Black', 'Nude', 'Pink', 'Red', 'White', 'Purple', 'Blue']
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -75,10 +74,10 @@ const BraForm = () => {
     setLoading(true)
     setError(null)
     try {
-      // Prepare final data with custom inputs
+      // Prepare final data with custom inputs (use custom input if provided, otherwise use selected option)
       const finalData = { ...formData }
       Object.keys(customInputs).forEach(key => {
-        if (customInputs[key]) {
+        if (customInputs[key] && customInputs[key].trim() !== '') {
           finalData[key] = customInputs[key]
         }
       })
@@ -106,15 +105,13 @@ const BraForm = () => {
 
   const updateFormData = (field, value) => {
     setFormData({ ...formData, [field]: value })
-    // Clear custom input when non-custom option is selected
-    if (value !== 'Custom') {
-      setCustomInputs({ ...customInputs, [field]: '' })
-    }
+    // Clear custom input when option is selected
+    setCustomInputs({ ...customInputs, [field]: '' })
   }
 
   const updateCustomInput = (field, value) => {
     setCustomInputs({ ...customInputs, [field]: value })
-    setFormData({ ...formData, [field]: value || 'Custom' })
+    // Don't update formData, keep it empty so custom input is used
   }
 
   const getDisplayValue = (field) => {
@@ -130,77 +127,50 @@ const BraForm = () => {
       case 1:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Country</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {countries.map((country) => (
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Age Range</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              {ageRanges.map((age) => (
                 <OptionCard
-                  key={country}
-                  option={country}
-                  isSelected={formData.country === country || (country === 'Other' && formData.country && !countries.slice(0, -1).includes(formData.country))}
-                  onClick={() => updateFormData('country', country)}
+                  key={age}
+                  option={age}
+                  isSelected={formData.ageRange === age}
+                  onClick={() => updateFormData('ageRange', age)}
                 />
               ))}
             </div>
-            {(formData.country === 'Other' || (formData.country && !countries.slice(0, -1).includes(formData.country))) && (
-              <CustomInput
-                value={customInputs.country || ''}
-                onChange={(value) => updateCustomInput('country', value)}
-                placeholder="Enter your country..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.ageRange || ''}
+              onChange={(value) => updateCustomInput('ageRange', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 2:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Age Range</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {ageRanges.map((age) => (
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Body Type</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              {bodyTypes.map((type) => (
                 <OptionCard
-                  key={age}
-                  option={age}
-                  isSelected={formData.ageRange === age || (age === 'Custom' && formData.ageRange && !ageRanges.slice(0, -1).includes(formData.ageRange))}
-                  onClick={() => updateFormData('ageRange', age)}
+                  key={type}
+                  option={type}
+                  isSelected={formData.bodyType === type}
+                  onClick={() => updateFormData('bodyType', type)}
                 />
               ))}
             </div>
-            {(formData.ageRange === 'Custom' || (formData.ageRange && !ageRanges.slice(0, -1).includes(formData.ageRange))) && (
-              <CustomInput
-                value={customInputs.ageRange || ''}
-                onChange={(value) => updateCustomInput('ageRange', value)}
-                placeholder="Enter your age range..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.bodyType || ''}
+              onChange={(value) => updateCustomInput('bodyType', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 3:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Body Type</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {bodyTypes.map((type) => (
-                <OptionCard
-                  key={type}
-                  option={type}
-                  isSelected={formData.bodyType === type || (type === 'Custom' && formData.bodyType && !bodyTypes.slice(0, -1).includes(formData.bodyType))}
-                  onClick={() => updateFormData('bodyType', type)}
-                />
-              ))}
-            </div>
-            {(formData.bodyType === 'Custom' || (formData.bodyType && !bodyTypes.slice(0, -1).includes(formData.bodyType))) && (
-              <CustomInput
-                value={customInputs.bodyType || ''}
-                onChange={(value) => updateCustomInput('bodyType', value)}
-                placeholder="Enter your body type..."
-              />
-            )}
-          </div>
-        )
-      case 4:
-        return (
-          <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Bra Size</h2>
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 max-h-96 overflow-y-auto mb-6">
               {braSizes.map((size) => (
                 <OptionCard
                   key={size}
@@ -210,9 +180,14 @@ const BraForm = () => {
                 />
               ))}
             </div>
+            <CustomInput
+              value={customInputs.braSize || ''}
+              onChange={(value) => updateCustomInput('braSize', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 5:
+      case 4:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Breast Type</h2>
@@ -229,57 +204,53 @@ const BraForm = () => {
             </div>
           </div>
         )
-      case 6:
+      case 5:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">What are you wearing? (Dress Type)</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               {dressTypes.map((dress) => (
                 <OptionCard
                   key={dress}
                   option={dress}
-                  isSelected={formData.dressType === dress || (dress === 'Custom' && formData.dressType && !dressTypes.slice(0, -1).includes(formData.dressType))}
+                  isSelected={formData.dressType === dress}
                   onClick={() => updateFormData('dressType', dress)}
                 />
               ))}
             </div>
-            {(formData.dressType === 'Custom' || (formData.dressType && !dressTypes.slice(0, -1).includes(formData.dressType))) && (
-              <CustomInput
-                value={customInputs.dressType || ''}
-                onChange={(value) => updateCustomInput('dressType', value)}
-                placeholder="Enter dress type..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.dressType || ''}
+              onChange={(value) => updateCustomInput('dressType', value)}
+              placeholder="Enter custom answer..."
+            />
+          </div>
+        )
+      case 6:
+        return (
+          <div>
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Occasion</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              {occasions.map((occasion) => (
+                <OptionCard
+                  key={occasion}
+                  option={occasion}
+                  isSelected={formData.occasion === occasion}
+                  onClick={() => updateFormData('occasion', occasion)}
+                />
+              ))}
+            </div>
+            <CustomInput
+              value={customInputs.occasion || ''}
+              onChange={(value) => updateCustomInput('occasion', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 7:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Occasion</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {occasions.map((occasion) => (
-                <OptionCard
-                  key={occasion}
-                  option={occasion}
-                  isSelected={formData.occasion === occasion || (occasion === 'Custom' && formData.occasion && !occasions.slice(0, -1).includes(formData.occasion))}
-                  onClick={() => updateFormData('occasion', occasion)}
-                />
-              ))}
-            </div>
-            {(formData.occasion === 'Custom' || (formData.occasion && !occasions.slice(0, -1).includes(formData.occasion))) && (
-              <CustomInput
-                value={customInputs.occasion || ''}
-                onChange={(value) => updateCustomInput('occasion', value)}
-                placeholder="Enter occasion..."
-              />
-            )}
-          </div>
-        )
-      case 8:
-        return (
-          <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Appearance Preference</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
               {appearancePreferences.map((pref) => (
                 <OptionCard
                   key={pref}
@@ -289,32 +260,35 @@ const BraForm = () => {
                 />
               ))}
             </div>
+            <CustomInput
+              value={customInputs.appearancePreference || ''}
+              onChange={(value) => updateCustomInput('appearancePreference', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 9:
+      case 8:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Is it for better sexual experience?</h2>
-            <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
+            <div className="grid grid-cols-2 gap-4 max-w-md mx-auto mb-6">
               {sexualExperienceOptions.map((option) => (
                 <OptionCard
                   key={option}
                   option={option}
-                  isSelected={formData.sexualExperience === option || (option === 'Custom' && formData.sexualExperience && !sexualExperienceOptions.slice(0, -1).includes(formData.sexualExperience))}
+                  isSelected={formData.sexualExperience === option}
                   onClick={() => updateFormData('sexualExperience', option)}
                 />
               ))}
             </div>
-            {(formData.sexualExperience === 'Custom' || (formData.sexualExperience && !sexualExperienceOptions.slice(0, -1).includes(formData.sexualExperience))) && (
-              <CustomInput
-                value={customInputs.sexualExperience || ''}
-                onChange={(value) => updateCustomInput('sexualExperience', value)}
-                placeholder="Enter your preference..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.sexualExperience || ''}
+              onChange={(value) => updateCustomInput('sexualExperience', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 10:
+      case 9:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Preferred Color?</h2>
@@ -345,25 +319,48 @@ const BraForm = () => {
             </div>
             {formData.wantsColor && (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   {colors.map((color) => (
                     <OptionCard
                       key={color}
                       option={color}
-                      isSelected={formData.colorPreference === color || (color === 'Custom' && formData.colorPreference && !colors.slice(0, -1).includes(formData.colorPreference))}
+                      isSelected={formData.colorPreference === color}
                       onClick={() => updateFormData('colorPreference', color)}
                     />
                   ))}
                 </div>
-                {(formData.colorPreference === 'Custom' || (formData.colorPreference && !colors.slice(0, -1).includes(formData.colorPreference))) && (
-                  <CustomInput
-                    value={customInputs.colorPreference || ''}
-                    onChange={(value) => updateCustomInput('colorPreference', value)}
-                    placeholder="Enter color preference..."
-                  />
-                )}
+                <CustomInput
+                  value={customInputs.colorPreference || ''}
+                  onChange={(value) => updateCustomInput('colorPreference', value)}
+                  placeholder="Enter custom answer..."
+                />
               </>
             )}
+          </div>
+        )
+      case 10:
+        return (
+          <div>
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Country</h2>
+            <div className="max-w-md mx-auto">
+              <select
+                value={formData.country}
+                onChange={(e) => updateFormData('country', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 border-primary focus:border-secondary focus:outline-none text-text-dark text-lg mb-6"
+              >
+                <option value="">Select your country...</option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+              <CustomInput
+                value={customInputs.country || ''}
+                onChange={(value) => updateCustomInput('country', value)}
+                placeholder="Enter custom answer..."
+              />
+            </div>
           </div>
         )
       default:
@@ -373,16 +370,16 @@ const BraForm = () => {
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return formData.country !== '' && (formData.country !== 'Other' || customInputs.country)
-      case 2: return formData.ageRange !== '' && (formData.ageRange !== 'Custom' || customInputs.ageRange)
-      case 3: return formData.bodyType !== '' && (formData.bodyType !== 'Custom' || customInputs.bodyType)
-      case 4: return formData.braSize !== '' && (formData.braSize !== 'Custom' || customInputs.braSize)
-      case 5: return formData.breastType !== ''
-      case 6: return formData.dressType !== '' && (formData.dressType !== 'Custom' || customInputs.dressType)
-      case 7: return formData.occasion !== '' && (formData.occasion !== 'Custom' || customInputs.occasion)
-      case 8: return formData.appearancePreference !== '' && (formData.appearancePreference !== 'Custom' || customInputs.appearancePreference)
-      case 9: return formData.sexualExperience !== '' && (formData.sexualExperience !== 'Custom' || customInputs.sexualExperience)
-      case 10: return !formData.wantsColor || (formData.colorPreference !== '' && (formData.colorPreference !== 'Custom' || customInputs.colorPreference))
+      case 1: return formData.ageRange !== '' || customInputs.ageRange !== ''
+      case 2: return formData.bodyType !== '' || customInputs.bodyType !== ''
+      case 3: return formData.braSize !== '' || customInputs.braSize !== ''
+      case 4: return formData.breastType !== ''
+      case 5: return formData.dressType !== '' || customInputs.dressType !== ''
+      case 6: return formData.occasion !== '' || customInputs.occasion !== ''
+      case 7: return formData.appearancePreference !== '' || customInputs.appearancePreference !== ''
+      case 8: return formData.sexualExperience !== '' || customInputs.sexualExperience !== ''
+      case 9: return !formData.wantsColor || formData.colorPreference !== '' || customInputs.colorPreference !== ''
+      case 10: return formData.country !== '' || customInputs.country !== ''
       default: return false
     }
   }

@@ -46,15 +46,6 @@ const Results = () => {
           </p>
         </div>
 
-        {data.aiSummary && (
-          <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 border border-white/50">
-            <h2 className="text-2xl font-bold text-text-dark mb-4">AI Analysis</h2>
-            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-              {data.aiSummary}
-            </p>
-          </div>
-        )}
-
         {data.recommendedStyles && (
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 border border-white/50">
             <h2 className="text-2xl font-bold text-text-dark mb-4">Why This Fits You</h2>

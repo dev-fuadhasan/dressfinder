@@ -6,6 +6,7 @@ import PinkButton from '../components/PinkButton'
 import Footer from '../components/Footer'
 import CustomInput from '../components/CustomInput'
 import { getApiUrl } from '../config/api'
+import { countries } from '../data/countries'
 
 const PantyForm = () => {
   const navigate = useNavigate()
@@ -29,11 +30,10 @@ const PantyForm = () => {
 
   const totalSteps = 9
 
-  const countries = ['United States', 'United Kingdom', 'Canada', 'Australia', 'India', 'Germany', 'France', 'Italy', 'Spain', 'Japan', 'China', 'Brazil', 'Mexico', 'Other']
-  const ageRanges = ['18-24', '25-30', '30-40', '40+', 'Custom']
-  const bodyTypes = ['Slim', 'Fit', 'Chubby', 'Curvy', 'Plus size', 'Custom']
-  const hipSizes = Array.from({ length: 23 }, (_, i) => 28 + i).concat(['Custom'])
-  const pantySizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', 'Custom']
+  const ageRanges = ['18-24', '25-30', '30-40', '40+']
+  const bodyTypes = ['Slim', 'Fit', 'Chubby', 'Curvy', 'Plus size']
+  const hipSizes = Array.from({ length: 23 }, (_, i) => 28 + i)
+  const pantySizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL']
   
   const buttTypes = [
     { name: 'A-Shaped (Heart)', image: '/asstypes/a-shape-heart.png' },
@@ -42,9 +42,9 @@ const PantyForm = () => {
     { name: 'O/Round-Shaped', image: '/asstypes/o-shaped-round.png' },
   ]
   
-  const pantyStyles = ['Bikini', 'Hipster', 'Boyshort', 'Thong', 'High Waist', 'Seamless', 'G-string', 'Custom']
-  const purposes = ['Daily wear', 'Office', 'Gym', 'Party', 'Period', 'Sexy Look', 'Custom']
-  const colors = ['Black', 'Nude', 'Pink', 'Red', 'White', 'Purple', 'Blue', 'Custom']
+  const pantyStyles = ['Bikini', 'Hipster', 'Boyshort', 'Thong', 'High Waist', 'Seamless', 'G-string']
+  const purposes = ['Daily wear', 'Office', 'Gym', 'Party', 'Period', 'Sexy Look']
+  const colors = ['Black', 'Nude', 'Pink', 'Red', 'White', 'Purple', 'Blue']
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
@@ -63,23 +63,23 @@ const PantyForm = () => {
 
   const updateFormData = (field, value) => {
     setFormData({ ...formData, [field]: value })
-    if (value !== 'Custom' && value !== 'Other') {
-      setCustomInputs({ ...customInputs, [field]: '' })
-    }
+    // Clear custom input when option is selected
+    setCustomInputs({ ...customInputs, [field]: '' })
   }
 
   const updateCustomInput = (field, value) => {
     setCustomInputs({ ...customInputs, [field]: value })
-    setFormData({ ...formData, [field]: value || (field === 'country' ? 'Other' : 'Custom') })
+    // Don't update formData, keep it empty so custom input is used
   }
 
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
     try {
+      // Prepare final data with custom inputs (use custom input if provided, otherwise use selected option)
       const finalData = { ...formData }
       Object.keys(customInputs).forEach(key => {
-        if (customInputs[key]) {
+        if (customInputs[key] && customInputs[key].trim() !== '') {
           finalData[key] = customInputs[key]
         }
       })
@@ -110,77 +110,50 @@ const PantyForm = () => {
       case 1:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Country</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {countries.map((country) => (
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Age Range</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              {ageRanges.map((age) => (
                 <OptionCard
-                  key={country}
-                  option={country}
-                  isSelected={formData.country === country || (country === 'Other' && formData.country && !countries.slice(0, -1).includes(formData.country))}
-                  onClick={() => updateFormData('country', country)}
+                  key={age}
+                  option={age}
+                  isSelected={formData.ageRange === age}
+                  onClick={() => updateFormData('ageRange', age)}
                 />
               ))}
             </div>
-            {(formData.country === 'Other' || (formData.country && !countries.slice(0, -1).includes(formData.country))) && (
-              <CustomInput
-                value={customInputs.country || ''}
-                onChange={(value) => updateCustomInput('country', value)}
-                placeholder="Enter your country..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.ageRange || ''}
+              onChange={(value) => updateCustomInput('ageRange', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 2:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Age Range</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {ageRanges.map((age) => (
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Body Type</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+              {bodyTypes.map((type) => (
                 <OptionCard
-                  key={age}
-                  option={age}
-                  isSelected={formData.ageRange === age || (age === 'Custom' && formData.ageRange && !ageRanges.slice(0, -1).includes(formData.ageRange))}
-                  onClick={() => updateFormData('ageRange', age)}
+                  key={type}
+                  option={type}
+                  isSelected={formData.bodyType === type}
+                  onClick={() => updateFormData('bodyType', type)}
                 />
               ))}
             </div>
-            {(formData.ageRange === 'Custom' || (formData.ageRange && !ageRanges.slice(0, -1).includes(formData.ageRange))) && (
-              <CustomInput
-                value={customInputs.ageRange || ''}
-                onChange={(value) => updateCustomInput('ageRange', value)}
-                placeholder="Enter your age range..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.bodyType || ''}
+              onChange={(value) => updateCustomInput('bodyType', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 3:
         return (
           <div>
-            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Body Type</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {bodyTypes.map((type) => (
-                <OptionCard
-                  key={type}
-                  option={type}
-                  isSelected={formData.bodyType === type || (type === 'Custom' && formData.bodyType && !bodyTypes.slice(0, -1).includes(formData.bodyType))}
-                  onClick={() => updateFormData('bodyType', type)}
-                />
-              ))}
-            </div>
-            {(formData.bodyType === 'Custom' || (formData.bodyType && !bodyTypes.slice(0, -1).includes(formData.bodyType))) && (
-              <CustomInput
-                value={customInputs.bodyType || ''}
-                onChange={(value) => updateCustomInput('bodyType', value)}
-                placeholder="Enter your body type..."
-              />
-            )}
-          </div>
-        )
-      case 4:
-        return (
-          <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Hip Size (inches)</h2>
-            <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 max-h-96 overflow-y-auto mb-6">
               {hipSizes.map((size) => (
                 <OptionCard
                   key={size}
@@ -190,16 +163,14 @@ const PantyForm = () => {
                 />
               ))}
             </div>
-            {(formData.hipSize === 'Custom' || (formData.hipSize && !hipSizes.slice(0, -1).includes(formData.hipSize))) && (
-              <CustomInput
-                value={customInputs.hipSize || ''}
-                onChange={(value) => updateCustomInput('hipSize', value)}
-                placeholder="Enter hip size..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.hipSize || ''}
+              onChange={(value) => updateCustomInput('hipSize', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 5:
+      case 4:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Panty Size</h2>
@@ -222,7 +193,7 @@ const PantyForm = () => {
             )}
           </div>
         )
-      case 6:
+      case 5:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Butt / Ass Type</h2>
@@ -239,53 +210,49 @@ const PantyForm = () => {
             </div>
           </div>
         )
-      case 7:
+      case 6:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Panty Style Preference</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               {pantyStyles.map((style) => (
                 <OptionCard
                   key={style}
                   option={style}
-                  isSelected={formData.pantyStyle === style || (style === 'Custom' && formData.pantyStyle && !pantyStyles.slice(0, -1).includes(formData.pantyStyle))}
+                  isSelected={formData.pantyStyle === style}
                   onClick={() => updateFormData('pantyStyle', style)}
                 />
               ))}
             </div>
-            {(formData.pantyStyle === 'Custom' || (formData.pantyStyle && !pantyStyles.slice(0, -1).includes(formData.pantyStyle))) && (
-              <CustomInput
-                value={customInputs.pantyStyle || ''}
-                onChange={(value) => updateCustomInput('pantyStyle', value)}
-                placeholder="Enter panty style..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.pantyStyle || ''}
+              onChange={(value) => updateCustomInput('pantyStyle', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 8:
+      case 7:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Purpose</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
               {purposes.map((purpose) => (
                 <OptionCard
                   key={purpose}
                   option={purpose}
-                  isSelected={formData.purpose === purpose || (purpose === 'Custom' && formData.purpose && !purposes.slice(0, -1).includes(formData.purpose))}
+                  isSelected={formData.purpose === purpose}
                   onClick={() => updateFormData('purpose', purpose)}
                 />
               ))}
             </div>
-            {(formData.purpose === 'Custom' || (formData.purpose && !purposes.slice(0, -1).includes(formData.purpose))) && (
-              <CustomInput
-                value={customInputs.purpose || ''}
-                onChange={(value) => updateCustomInput('purpose', value)}
-                placeholder="Enter purpose..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.purpose || ''}
+              onChange={(value) => updateCustomInput('purpose', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
-      case 9:
+      case 8:
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Preferred Color?</h2>
@@ -316,25 +283,48 @@ const PantyForm = () => {
             </div>
             {formData.wantsColor && (
               <>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   {colors.map((color) => (
                     <OptionCard
                       key={color}
                       option={color}
-                      isSelected={formData.colorPreference === color || (color === 'Custom' && formData.colorPreference && !colors.slice(0, -1).includes(formData.colorPreference))}
+                      isSelected={formData.colorPreference === color}
                       onClick={() => updateFormData('colorPreference', color)}
                     />
                   ))}
                 </div>
-                {(formData.colorPreference === 'Custom' || (formData.colorPreference && !colors.slice(0, -1).includes(formData.colorPreference))) && (
-                  <CustomInput
-                    value={customInputs.colorPreference || ''}
-                    onChange={(value) => updateCustomInput('colorPreference', value)}
-                    placeholder="Enter color preference..."
-                  />
-                )}
+                <CustomInput
+                  value={customInputs.colorPreference || ''}
+                  onChange={(value) => updateCustomInput('colorPreference', value)}
+                  placeholder="Enter custom answer..."
+                />
               </>
             )}
+          </div>
+        )
+      case 9:
+        return (
+          <div>
+            <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Country</h2>
+            <div className="max-w-md mx-auto">
+              <select
+                value={formData.country}
+                onChange={(e) => updateFormData('country', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 border-primary focus:border-secondary focus:outline-none text-text-dark text-lg mb-6"
+              >
+                <option value="">Select your country...</option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+              <CustomInput
+                value={customInputs.country || ''}
+                onChange={(value) => updateCustomInput('country', value)}
+                placeholder="Enter custom answer..."
+              />
+            </div>
           </div>
         )
       default:
@@ -344,15 +334,15 @@ const PantyForm = () => {
 
   const canProceed = () => {
     switch (currentStep) {
-      case 1: return formData.country !== '' && (formData.country !== 'Other' || customInputs.country)
-      case 2: return formData.ageRange !== '' && (formData.ageRange !== 'Custom' || customInputs.ageRange)
-      case 3: return formData.bodyType !== '' && (formData.bodyType !== 'Custom' || customInputs.bodyType)
-      case 4: return formData.hipSize !== '' && (formData.hipSize !== 'Custom' || customInputs.hipSize)
-      case 5: return formData.pantySize !== '' && (formData.pantySize !== 'Custom' || customInputs.pantySize)
-      case 6: return formData.buttType !== ''
-      case 7: return formData.pantyStyle !== '' && (formData.pantyStyle !== 'Custom' || customInputs.pantyStyle)
-      case 8: return formData.purpose !== '' && (formData.purpose !== 'Custom' || customInputs.purpose)
-      case 9: return !formData.wantsColor || (formData.colorPreference !== '' && (formData.colorPreference !== 'Custom' || customInputs.colorPreference))
+      case 1: return formData.ageRange !== '' || customInputs.ageRange !== ''
+      case 2: return formData.bodyType !== '' || customInputs.bodyType !== ''
+      case 3: return formData.hipSize !== '' || customInputs.hipSize !== ''
+      case 4: return formData.pantySize !== '' || customInputs.pantySize !== ''
+      case 5: return formData.buttType !== ''
+      case 6: return formData.pantyStyle !== '' || customInputs.pantyStyle !== ''
+      case 7: return formData.purpose !== '' || customInputs.purpose !== ''
+      case 8: return !formData.wantsColor || formData.colorPreference !== '' || customInputs.colorPreference !== ''
+      case 9: return formData.country !== '' || customInputs.country !== ''
       default: return false
     }
   }
