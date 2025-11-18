@@ -12,7 +12,7 @@
 
 body {
   font-family: 'Inter', 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #ffe5f3 0%, #ff88c6 100%);
+  background: linear-gradient(135deg, rgba(255, 229, 243, 0.3) 0%, rgba(255, 136, 198, 0.2) 100%);
   min-height: 100vh;
 }
 

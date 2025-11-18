@@ -296,7 +296,7 @@ const BraForm = () => {
       <div className="container mx-auto max-w-4xl">
         <Stepper currentStep={currentStep} totalSteps={totalSteps} />
         
-        <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 border border-white/50">
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}

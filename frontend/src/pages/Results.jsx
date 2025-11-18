@@ -47,7 +47,7 @@ const Results = () => {
         </div>
 
         {data.aiSummary && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8">
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 border border-white/50">
             <h2 className="text-2xl font-bold text-text-dark mb-4">AI Analysis</h2>
             <p className="text-gray-700 leading-relaxed whitespace-pre-line">
               {data.aiSummary}
@@ -56,7 +56,7 @@ const Results = () => {
         )}
 
         {data.recommendedStyles && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8">
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 border border-white/50">
             <h2 className="text-2xl font-bold text-text-dark mb-4">Why This Fits You</h2>
             <div className="text-gray-700 leading-relaxed whitespace-pre-line">
               {data.recommendedStyles}
@@ -78,7 +78,7 @@ const Results = () => {
         )}
 
         {(!data.products || data.products.length === 0) && (
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 text-center">
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl mb-8 text-center border border-white/50">
             <p className="text-gray-600 mb-4">No products found. Please try again with different preferences.</p>
           </div>
         )}

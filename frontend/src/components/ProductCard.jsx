@@ -1,15 +1,20 @@
 const ProductCard = ({ product }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-105">
-      <div className="w-full h-64 bg-gray-100 overflow-hidden">
-        <img
-          src={product.image || '/placeholder.png'}
-          alt={product.title}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.target.src = '/placeholder.png'
-          }}
-        />
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02]">
+      <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center">
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.title}
+            className="w-full h-full object-contain p-4"
+            onError={(e) => {
+              e.target.style.display = 'none'
+              e.target.parentElement.innerHTML = '<div class="text-4xl text-gray-400">🛍️</div>'
+            }}
+          />
+        ) : (
+          <div className="text-4xl text-gray-400">🛍️</div>
+        )}
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-text-dark mb-2 line-clamp-2 min-h-[3rem]">
