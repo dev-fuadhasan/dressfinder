@@ -2,9 +2,9 @@ const ProductCard = ({ product }) => {
   return (
     <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:scale-[1.02]">
       <div className="w-full h-64 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex items-center justify-center">
-        {product.image ? (
+        {(product.image || product.imageUrl) ? (
           <img
-            src={product.image}
+            src={product.image || product.imageUrl}
             alt={product.title}
             className="w-full h-full object-contain p-4"
             onError={(e) => {

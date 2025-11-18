@@ -61,8 +61,9 @@ KEYWORDS: [comma-separated keywords for shopping search]`
     const recommendedStyles = stylesMatch ? stylesMatch[1].trim() : ''
     const keywords = keywordsMatch ? keywordsMatch[1].trim() : ''
 
-    // Build search query
+    // Build search query with country priority
     let searchQuery = `best bra`
+    if (formData.country) searchQuery += ` in ${formData.country}`
     if (formData.breastType) searchQuery += ` for ${formData.breastType.toLowerCase()} breasts`
     if (formData.dressType) searchQuery += ` for ${formData.dressType.toLowerCase()}`
     if (formData.appearancePreference) searchQuery += ` ${formData.appearancePreference.toLowerCase()}`
@@ -70,7 +71,7 @@ KEYWORDS: [comma-separated keywords for shopping search]`
     if (formData.braSize) searchQuery += ` size ${formData.braSize}`
     if (keywords) searchQuery += ` ${keywords}`
 
-    // Search products using Serper
+    // Search products using Serper - try with country first
     let products = []
     try {
       const serperResponse = await axios.post(
@@ -91,11 +92,49 @@ KEYWORDS: [comma-separated keywords for shopping search]`
         products = serperResponse.data.shopping.map((item) => ({
           title: item.title,
           price: item.price,
-          image: item.image,
+          image: item.image || item.imageUrl,
+          imageUrl: item.image || item.imageUrl,
           link: item.link,
           rating: item.rating,
           store: item.source,
         }))
+      }
+
+      // If no products found and country was specified, try without country
+      if (products.length === 0 && formData.country) {
+        let fallbackQuery = `best bra`
+        if (formData.breastType) fallbackQuery += ` for ${formData.breastType.toLowerCase()} breasts`
+        if (formData.dressType) fallbackQuery += ` for ${formData.dressType.toLowerCase()}`
+        if (formData.appearancePreference) fallbackQuery += ` ${formData.appearancePreference.toLowerCase()}`
+        if (formData.colorPreference) fallbackQuery += ` ${formData.colorPreference.toLowerCase()} color`
+        if (formData.braSize) fallbackQuery += ` size ${formData.braSize}`
+        if (keywords) fallbackQuery += ` ${keywords}`
+
+        const fallbackResponse = await axios.post(
+          'https://google.serper.dev/shopping',
+          {
+            q: fallbackQuery,
+            num: 40,
+          },
+          {
+            headers: {
+              'X-API-KEY': process.env.SERPER_API_KEY,
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        if (fallbackResponse.data && fallbackResponse.data.shopping) {
+          products = fallbackResponse.data.shopping.map((item) => ({
+            title: item.title,
+            price: item.price,
+            image: item.image || item.imageUrl,
+            imageUrl: item.image || item.imageUrl,
+            link: item.link,
+            rating: item.rating,
+            store: item.source,
+          }))
+        }
       }
     } catch (error) {
       console.error('Serper API error:', error.message)
