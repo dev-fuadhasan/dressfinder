@@ -19,10 +19,9 @@
 - Axios
 
 ### Backend
-- Node.js + Express
-- Groq AI SDK (Llama 3.3 70B)
+- Cloudflare Workers (Wrangler)
+- Groq Chat Completions API (Llama 3.3 70B)
 - Serper.dev Shopping API
-- CORS enabled
 
 ## 📁 Project Structure
 
@@ -49,11 +48,11 @@ PerfectFit/
 │   ├── package.json
 │   └── vite.config.js
 ├── backend/
-│   ├── routes/
-│   │   ├── bra.js
-│   │   └── panty.js
-│   ├── server.js
-│   └── package.json
+│   ├── src/
+│   │   └── worker.js
+│   ├── wrangler.toml
+│   ├── package.json
+│   └── .dev.vars.example
 ├── public/
 │   ├── boobstype/
 │   └── asstypes/
@@ -64,37 +63,42 @@ PerfectFit/
 
 ### Prerequisites
 - Node.js (v18 or higher)
-- npm or yarn
+- npm
+- Cloudflare account with Workers access
 - Groq API Key
 - Serper.dev API Key
 
-### Backend Setup
+### Backend Setup (Cloudflare Workers)
 
 1. Navigate to the backend directory:
 ```bash
 cd backend
 ```
 
-2. Install dependencies:
+2. Install dependencies (installs Wrangler locally):
 ```bash
 npm install
 ```
 
-3. Create a `.env` file in the backend directory:
-```env
-GROQ_API_KEY=your_groq_api_key_here
-SERPER_API_KEY=your_serper_api_key_here
-PORT=5000
+3. Create local env vars by copying the example file:
+```bash
+cp .dev.vars.example .dev.vars # macOS/Linux
+# or
+copy .dev.vars.example .dev.vars # Windows PowerShell
+```
+Fill in your `GROQ_API_KEY` and `SERPER_API_KEY` in `.dev.vars`.
+
+4. (First time only) authenticate Wrangler:
+```bash
+npx wrangler login
 ```
 
-4. Start the backend server:
+5. Start the worker locally:
 ```bash
-npm start
-# or for development with auto-reload:
 npm run dev
 ```
 
-The backend will run on `http://localhost:5000`
+Wrangler serves the worker at `http://127.0.0.1:8787` (the Vite dev server proxies `/api` to this port).
 
 ### Frontend Setup
 
@@ -128,21 +132,23 @@ npm run build
 2. Deploy the `dist` folder to Netlify
 3. **IMPORTANT**: Set environment variable in Netlify dashboard:
    - Go to Site settings > Environment variables
-   - Add: `VITE_API_URL` = `https://your-render-backend-url.onrender.com`
-   - Replace `your-render-backend-url` with your actual Render backend URL
+   - Add: `VITE_API_URL` = `https://your-worker-subdomain.workers.dev`
+   - Replace `your-worker-subdomain` with your actual Worker domain (or custom domain)
 4. Redeploy after setting the environment variable
 
-### Backend (Render)
+### Backend (Cloudflare Workers)
 
-1. Connect your GitHub repository to Render
-2. Set the following:
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Environment**: Node
-3. Add environment variables in Render dashboard:
-   - `GROQ_API_KEY`
-   - `SERPER_API_KEY`
-   - `PORT` (optional, defaults to 5000)
+1. From the `backend/` directory deploy with Wrangler:
+```bash
+npm run deploy
+```
+2. Set secrets so the worker can access external APIs:
+```bash
+wrangler secret put GROQ_API_KEY
+wrangler secret put SERPER_API_KEY
+```
+   (You can also set these in the Cloudflare dashboard under Workers > Settings > Variables.)
+3. Once deployment finishes, note the `*.workers.dev` URL and use it for `VITE_API_URL`.
 
 ## 📝 API Endpoints
 

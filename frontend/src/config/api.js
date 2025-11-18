@@ -1,6 +1,6 @@
 // API configuration
-// In production, this should be set to your Render backend URL
-// In development, it will use the proxy from vite.config.js
+// In production, set VITE_API_URL to your Cloudflare Worker URL
+// In development, it falls back to the Vite proxy (wrangler dev on port 8787)
 const API_URL = import.meta.env.VITE_API_URL || ''
 
 export const getApiUrl = (endpoint) => {

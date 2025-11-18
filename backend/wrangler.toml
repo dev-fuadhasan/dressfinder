@@ -1,0 +1,11 @@
+name = "perfectfit-ai-worker"
+main = "src/worker.js"
+compatibility_date = "2025-01-20"
+workers_dev = true
+
+# Uncomment and set route if binding to a custom domain
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+
+
