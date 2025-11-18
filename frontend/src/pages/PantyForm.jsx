@@ -4,6 +4,7 @@ import Stepper from '../components/Stepper'
 import OptionCard from '../components/OptionCard'
 import PinkButton from '../components/PinkButton'
 import Footer from '../components/Footer'
+import { getApiUrl } from '../config/api'
 
 const PantyForm = () => {
   const navigate = useNavigate()
@@ -59,7 +60,7 @@ const PantyForm = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('/api/recommend/panty', {
+      const response = await fetch(getApiUrl('/api/recommend/panty'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

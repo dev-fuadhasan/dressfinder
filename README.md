@@ -126,8 +126,11 @@ npm run build
 ```
 
 2. Deploy the `dist` folder to Netlify
-3. Set environment variables in Netlify dashboard if needed
-4. Update API URL in frontend to point to your backend URL
+3. **IMPORTANT**: Set environment variable in Netlify dashboard:
+   - Go to Site settings > Environment variables
+   - Add: `VITE_API_URL` = `https://your-render-backend-url.onrender.com`
+   - Replace `your-render-backend-url` with your actual Render backend URL
+4. Redeploy after setting the environment variable
 
 ### Backend (Render)
 

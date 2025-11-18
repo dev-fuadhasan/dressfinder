@@ -4,6 +4,7 @@ import Stepper from '../components/Stepper'
 import OptionCard from '../components/OptionCard'
 import PinkButton from '../components/PinkButton'
 import Footer from '../components/Footer'
+import { getApiUrl } from '../config/api'
 
 const BraForm = () => {
   const navigate = useNavigate()
@@ -71,7 +72,7 @@ const BraForm = () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('/api/recommend/bra', {
+      const response = await fetch(getApiUrl('/api/recommend/bra'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
