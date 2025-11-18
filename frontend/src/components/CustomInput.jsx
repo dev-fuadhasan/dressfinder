@@ -6,7 +6,7 @@ const CustomInput = ({ value, onChange, placeholder = "Enter custom value..." })
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl border-2 border-primary focus:border-secondary focus:outline-none text-text-dark"
+        className="w-full px-4 py-3 rounded-xl border-2 border-black bg-white text-black focus:border-black focus:outline-none placeholder:text-gray-500"
       />
     </div>
   )

@@ -348,7 +348,7 @@ const BraForm = () => {
               <select
                 value={formData.country}
                 onChange={(e) => updateFormData('country', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 border-primary focus:border-secondary focus:outline-none text-text-dark text-lg mb-6"
+                className="w-full px-4 py-3 rounded-xl border-2 border-black bg-white text-black focus:border-black focus:outline-none text-lg mb-6"
               >
                 <option value="">Select your country...</option>
                 {countries.map((country) => (
