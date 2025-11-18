@@ -174,23 +174,21 @@ const PantyForm = () => {
         return (
           <div>
             <h2 className="text-3xl font-bold text-text-dark mb-8 text-center">Panty Size</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               {pantySizes.map((size) => (
                 <OptionCard
                   key={size}
                   option={size}
-                  isSelected={formData.pantySize === size || (size === 'Custom' && formData.pantySize && !pantySizes.slice(0, -1).includes(formData.pantySize))}
+                  isSelected={formData.pantySize === size}
                   onClick={() => updateFormData('pantySize', size)}
                 />
               ))}
             </div>
-            {(formData.pantySize === 'Custom' || (formData.pantySize && !pantySizes.slice(0, -1).includes(formData.pantySize))) && (
-              <CustomInput
-                value={customInputs.pantySize || ''}
-                onChange={(value) => updateCustomInput('pantySize', value)}
-                placeholder="Enter panty size..."
-              />
-            )}
+            <CustomInput
+              value={customInputs.pantySize || ''}
+              onChange={(value) => updateCustomInput('pantySize', value)}
+              placeholder="Enter custom answer..."
+            />
           </div>
         )
       case 5:
