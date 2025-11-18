@@ -189,6 +189,7 @@ const PantyForm = () => {
                   onClick={() => updateFormData('hipSize', size.toString())}
                 />
               ))}
+            </div>
             {(formData.hipSize === 'Custom' || (formData.hipSize && !hipSizes.slice(0, -1).includes(formData.hipSize))) && (
               <CustomInput
                 value={customInputs.hipSize || ''}
